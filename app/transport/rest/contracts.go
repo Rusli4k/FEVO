@@ -14,6 +14,5 @@ type TAUsecase interface {
 	GetTransByStatus(string) ([]entities.Transaction, error)
 	GetTransByPayType(string) ([]entities.Transaction, error)
 	GetTransByDataPost(map[string]time.Time) ([]entities.Transaction, error)
-
-	// GetTrByPaymentNarrativeUC()
+	GetTransByPayNar(string) ([]entities.Transaction, error)
 }

@@ -43,14 +43,14 @@ func (th TAHandler) UploadTransactions() http.Handler {
 	})
 }
 
-// GetTransactions handle filters in request.
+// GetTransactions handles filters in request.
 func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var par entities.Filter
 		var err error
 		values := r.URL.Query()
 
-		// Handling transaction ID from request.
+		// Handling "transaction ID" from request.
 		if value, ok := values[keyTaID]; ok {
 			par.TransactionID, err = strconv.Atoi(value[0])
 			if err != nil {
@@ -73,7 +73,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 			return
 		}
 
-		// Handling terminal ID from request.
+		// Handling "terminal ID" from request.
 		if value, ok := values[keyTmID]; ok {
 			for _, v := range value {
 				id, err := strconv.Atoi(v)
@@ -108,7 +108,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 			return
 		}
 
-		// Handling parameter status from request - accepted|declined.
+		// Handling parameter "status" from request - accepted|declined.
 		if value, ok := values[keyStatus]; ok {
 			par.Status = value[0]
 			if par.Status != statusValAccepted && par.Status != statusValDeclined {
@@ -139,7 +139,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 			return
 		}
 
-		// Handling parameter payment type from request - cash|card.
+		// Handling parameter "payment type" from request - cash|card.
 		if value, ok := values[keyPayType]; ok {
 			par.PaymentType = value[0]
 			if par.PaymentType != payValCard && par.PaymentType != payValCash {
@@ -170,7 +170,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 			return
 		}
 
-		// Handling parameter date post from request.
+		// Handling parameter "date post" from request.
 		if value, ok := values[keyDatePost]; ok {
 			par.DatePost, err = parser.ParseDateFromString(value[0])
 			if err != nil {
@@ -192,7 +192,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 			if ansTa == nil {
 				WriteJSONResponse(w, http.StatusOK, Response{
 					Message: MsgNotFound,
-					Details: fmt.Sprint("No data found with input: ", par.PaymentType),
+					Details: fmt.Sprint("No data found with input: ", value),
 				})
 
 				return
@@ -202,10 +202,35 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 			return
 		}
 
-		// Handling parameter payment narrative from request.
+		// Handling parameter "payment narrative" from request.
 		if value, ok := values[keyPayNar]; ok {
 			par.PaymentNarrative = value[0]
+			if len(par.PaymentNarrative) < payNarMinLen {
+				WriteJSONResponse(w, http.StatusBadRequest, Response{
+					Message: MSgBadURL,
+					Details: fmt.Sprintf("Min length of payment narrative is %v", payNarMinLen)})
 
+				return
+			}
+			ansTa, err := ta.usecase.GetTransByPayNar(par.PaymentNarrative)
+			if err != nil {
+				WriteJSONResponse(w, http.StatusInternalServerError, Response{
+					Message: MsgInternalSeverErr,
+					Details: err.Error()})
+
+				return
+			}
+			if ansTa == nil {
+				WriteJSONResponse(w, http.StatusOK, Response{
+					Message: MsgNotFound,
+					Details: fmt.Sprint("No data found with input: ", value),
+				})
+
+				return
+			}
+			WriteJSONResponse(w, http.StatusOK, ansTa)
+
+			return
 		}
 	})
 }

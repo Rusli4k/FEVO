@@ -190,6 +190,38 @@ func (r Repo) GetTrByDataPost(date map[string]time.Time) ([]entities.Transaction
 	return tas, nil
 }
 
+func (r Repo) GetTrByPayNar(st string) ([]entities.Transaction, error) {
+	var sqlStatement = `SELECT * FROM "transaction" WHERE payment_narrative LIKE $1`
+	st = "%" + st + "%"
+	rows, err := r.DB.Query(sqlStatement, st)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, fmt.Errorf("error getting rows: %w", err)
+	}
+	defer rows.Close()
+
+	var tas []entities.Transaction
+
+	for rows.Next() {
+		var tr entities.Transaction
+		err := rows.Scan(&tr.ID, &tr.RequestID, &tr.TerminalID, &tr.PartnerObjectID,
+			&tr.AmountTotal, &tr.AmountOriginal, &tr.CommissionPS, &tr.CommissionClient, &tr.CommissionProvider,
+			&tr.DateInput, &tr.DatePost, &tr.Status, &tr.PaymentType, &tr.PaymentNumber, &tr.ServiceID,
+			&tr.Service, &tr.PayeeID, &tr.PayeeName, &tr.PayeeBankMFO, &tr.PayeeBankAccount,
+			&tr.PaymentNarrative)
+
+		if err != nil {
+			return nil, fmt.Errorf("error getting rows: %w", err)
+		}
+		tas = append(tas, tr)
+	}
+
+	return tas, nil
+}
+
 // // GetTrByTerminalID
 // func (r Repo) GetTrByTerminalID()
 

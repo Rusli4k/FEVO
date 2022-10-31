@@ -19,8 +19,5 @@ type TARepository interface {
 	GetTrByStatus(string) ([]entities.Transaction, error)
 	GetTrByPayType(string) ([]entities.Transaction, error)
 	GetTrByDataPost(map[string]time.Time) ([]entities.Transaction, error)
-	// GetTrByStatus()
-	// GetTrByPaymentType()
-	// GetTrByDataPost()
-	// GetTrByPaymentNarrative()
+	GetTrByPayNar(string) ([]entities.Transaction, error)
 }

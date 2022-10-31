@@ -82,4 +82,15 @@ func (tr Transaction) GetTransByDataPost(date map[string]time.Time) ([]entities.
 	return ts, nil
 }
 
+func (tr Transaction) GetTransByPayNar(st string) ([]entities.Transaction, error) {
+	ts, err := tr.Repo.GetTrByPayNar(st)
+	if ts == nil {
+		if err != nil {
+			return nil, fmt.Errorf("repository error: %w", err)
+		}
+		return nil, nil
+	}
+	return ts, nil
+}
+
 // // func (t Transaction) GetTrByPaymentNarrativeUC()
