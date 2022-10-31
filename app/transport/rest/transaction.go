@@ -29,7 +29,7 @@ func (th TAHandler) UploadTransactions() http.Handler {
 		}
 
 		for _, v := range ts {
-			if err := th.usecase.UploadTr(v); err != nil {
+			if err := th.usecase.UploadTrans(v); err != nil {
 				WriteJSONResponse(w, http.StatusInternalServerError, Response{
 					Message: "Error while adding to db: ",
 					Details: err.Error()})
@@ -43,14 +43,14 @@ func (th TAHandler) UploadTransactions() http.Handler {
 	})
 }
 
-// GetTransactions handle  filters in request.
+// GetTransactions handle filters in request.
 func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var par entities.Filter
 		var err error
 		values := r.URL.Query()
 
-		// Getting transaction ID from request.
+		// Handling transaction ID from request.
 		if value, ok := values[keyTaID]; ok {
 			par.TransactionID, err = strconv.Atoi(value[0])
 			if err != nil {
@@ -73,9 +73,8 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 			return
 		}
 
-		// Getting terminal ID from request - type: []int.
+		// Handling terminal ID from request.
 		if value, ok := values[keyTmID]; ok {
-
 			for _, v := range value {
 				id, err := strconv.Atoi(v)
 				if err != nil {
@@ -109,52 +108,103 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 			return
 		}
 
-		// Getting parameter status from request - accepted|declined.
+		// Handling parameter status from request - accepted|declined.
 		if value, ok := values[keyStatus]; ok {
-			{
-				par.Status = value[0]
-				if par.Status != statusValAccepted && par.Status != statusValDeclined {
-					WriteJSONResponse(w, http.StatusBadRequest, Response{
-						Message: MSgBadURL,
-						Details: err.Error()})
+			par.Status = value[0]
+			if par.Status != statusValAccepted && par.Status != statusValDeclined {
+				WriteJSONResponse(w, http.StatusBadRequest, Response{
+					Message: MSgBadURL,
+					Details: fmt.Sprintf("Invalid input for filter: %s", par.Status)})
 
-					return
-				}
+				return
 			}
+			ansTa, err := ta.usecase.GetTransByStatus(par.Status)
+			if err != nil {
+				WriteJSONResponse(w, http.StatusInternalServerError, Response{
+					Message: MsgInternalSeverErr,
+					Details: err.Error()})
+
+				return
+			}
+			if ansTa == nil {
+				WriteJSONResponse(w, http.StatusOK, Response{
+					Message: MsgNotFound,
+					Details: fmt.Sprint("No data found with input: ", par.Status),
+				})
+
+				return
+			}
+			WriteJSONResponse(w, http.StatusOK, ansTa)
+
+			return
 		}
-		// Getting parameter payment type from request - cash|card.
+
+		// Handling parameter payment type from request - cash|card.
 		if value, ok := values[keyPayType]; ok {
-			{
-				par.Status = value[0]
-				if par.PaymentType != payValCash && par.PaymentType != payValCard {
-					WriteJSONResponse(w, http.StatusBadRequest, Response{
-						Message: MSgBadURL,
-						Details: err.Error()})
+			par.PaymentType = value[0]
+			if par.PaymentType != payValCard && par.PaymentType != payValCash {
+				WriteJSONResponse(w, http.StatusBadRequest, Response{
+					Message: MSgBadURL,
+					Details: fmt.Sprintf("Invalid input for filter: %s", par.PaymentType)})
 
-					return
-				}
+				return
 			}
+			ansTa, err := ta.usecase.GetTransByPayType(par.PaymentType)
+			if err != nil {
+				WriteJSONResponse(w, http.StatusInternalServerError, Response{
+					Message: MsgInternalSeverErr,
+					Details: err.Error()})
+
+				return
+			}
+			if ansTa == nil {
+				WriteJSONResponse(w, http.StatusOK, Response{
+					Message: MsgNotFound,
+					Details: fmt.Sprint("No data found with input: ", par.PaymentType),
+				})
+
+				return
+			}
+			WriteJSONResponse(w, http.StatusOK, ansTa)
+
+			return
 		}
-		// Getting parameter Date from request - fromXXXX-XX-XXtoXXXX-XX-XX.
+
+		// Handling parameter date post from request.
 		if value, ok := values[keyDatePost]; ok {
-			{
-				par.DatePost, err = parser.ParseDateFromString(value[0])
-				if err != nil {
-					WriteJSONResponse(w, http.StatusBadRequest, Response{
-						Message: MSgBadURL,
-						Details: err.Error()})
+			par.DatePost, err = parser.ParseDateFromString(value[0])
+			if err != nil {
+				WriteJSONResponse(w, http.StatusBadRequest, Response{
+					Message: MSgBadURL,
+					Details: fmt.Sprintf("Invalid input %s", value)})
 
-					return
-				}
+				return
 			}
+
+			ansTa, err := ta.usecase.GetTransByDataPost(par.DatePost)
+			if err != nil {
+				WriteJSONResponse(w, http.StatusInternalServerError, Response{
+					Message: MsgInternalSeverErr,
+					Details: err.Error()})
+
+				return
+			}
+			if ansTa == nil {
+				WriteJSONResponse(w, http.StatusOK, Response{
+					Message: MsgNotFound,
+					Details: fmt.Sprint("No data found with input: ", par.PaymentType),
+				})
+
+				return
+			}
+			WriteJSONResponse(w, http.StatusOK, ansTa)
+
+			return
 		}
-		// Getting parameter payment narrative from request - string.
+
+		// Handling parameter payment narrative from request.
 		if value, ok := values[keyPayNar]; ok {
-
-			{
-				par.PaymentNarrative = value[0]
-
-			}
+			par.PaymentNarrative = value[0]
 
 		}
 	})

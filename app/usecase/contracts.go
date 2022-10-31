@@ -5,6 +5,8 @@
 package usecase
 
 import (
+	"time"
+
 	"github.com/rusli4k/fevo/app/entities"
 )
 
@@ -14,6 +16,9 @@ type TARepository interface {
 	AddTr(entities.Transaction) error
 	GetTrByID(int) (*entities.Transaction, error)
 	GetTrByTermID([]int) ([]entities.Transaction, error)
+	GetTrByStatus(string) ([]entities.Transaction, error)
+	GetTrByPayType(string) ([]entities.Transaction, error)
+	GetTrByDataPost(map[string]time.Time) ([]entities.Transaction, error)
 	// GetTrByStatus()
 	// GetTrByPaymentType()
 	// GetTrByDataPost()

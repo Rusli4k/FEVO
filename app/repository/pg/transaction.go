@@ -6,6 +6,7 @@ package pg
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/lib/pq" // Standard blanc import for pq.
 	"github.com/rusli4k/fevo/app/entities"
@@ -73,6 +74,99 @@ func (r Repo) GetTrByTermID(id []int) ([]entities.Transaction, error) {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
+		return nil, fmt.Errorf("error getting rows: %w", err)
+	}
+	defer rows.Close()
+
+	var tas []entities.Transaction
+
+	for rows.Next() {
+		var tr entities.Transaction
+		err := rows.Scan(&tr.ID, &tr.RequestID, &tr.TerminalID, &tr.PartnerObjectID,
+			&tr.AmountTotal, &tr.AmountOriginal, &tr.CommissionPS, &tr.CommissionClient, &tr.CommissionProvider,
+			&tr.DateInput, &tr.DatePost, &tr.Status, &tr.PaymentType, &tr.PaymentNumber, &tr.ServiceID,
+			&tr.Service, &tr.PayeeID, &tr.PayeeName, &tr.PayeeBankMFO, &tr.PayeeBankAccount,
+			&tr.PaymentNarrative)
+
+		if err != nil {
+			return nil, fmt.Errorf("error getting rows: %w", err)
+		}
+		tas = append(tas, tr)
+	}
+
+	return tas, nil
+}
+
+func (r Repo) GetTrByStatus(st string) ([]entities.Transaction, error) {
+	var sqlStatement = `SELECT * FROM "transaction" WHERE status = $1`
+
+	rows, err := r.DB.Query(sqlStatement, st)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error getting rows: %w", err)
+	}
+	defer rows.Close()
+
+	var tas []entities.Transaction
+
+	for rows.Next() {
+		var tr entities.Transaction
+		err := rows.Scan(&tr.ID, &tr.RequestID, &tr.TerminalID, &tr.PartnerObjectID,
+			&tr.AmountTotal, &tr.AmountOriginal, &tr.CommissionPS, &tr.CommissionClient, &tr.CommissionProvider,
+			&tr.DateInput, &tr.DatePost, &tr.Status, &tr.PaymentType, &tr.PaymentNumber, &tr.ServiceID,
+			&tr.Service, &tr.PayeeID, &tr.PayeeName, &tr.PayeeBankMFO, &tr.PayeeBankAccount,
+			&tr.PaymentNarrative)
+
+		if err != nil {
+			return nil, fmt.Errorf("error getting rows: %w", err)
+		}
+		tas = append(tas, tr)
+	}
+
+	return tas, nil
+}
+
+func (r Repo) GetTrByPayType(st string) ([]entities.Transaction, error) {
+	var sqlStatement = `SELECT * FROM "transaction" WHERE payment_type = $1`
+
+	rows, err := r.DB.Query(sqlStatement, st)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error getting rows: %w", err)
+	}
+	defer rows.Close()
+
+	var tas []entities.Transaction
+
+	for rows.Next() {
+		var tr entities.Transaction
+		err := rows.Scan(&tr.ID, &tr.RequestID, &tr.TerminalID, &tr.PartnerObjectID,
+			&tr.AmountTotal, &tr.AmountOriginal, &tr.CommissionPS, &tr.CommissionClient, &tr.CommissionProvider,
+			&tr.DateInput, &tr.DatePost, &tr.Status, &tr.PaymentType, &tr.PaymentNumber, &tr.ServiceID,
+			&tr.Service, &tr.PayeeID, &tr.PayeeName, &tr.PayeeBankMFO, &tr.PayeeBankAccount,
+			&tr.PaymentNarrative)
+
+		if err != nil {
+			return nil, fmt.Errorf("error getting rows: %w", err)
+		}
+		tas = append(tas, tr)
+	}
+
+	return tas, nil
+}
+
+func (r Repo) GetTrByDataPost(date map[string]time.Time) ([]entities.Transaction, error) {
+	var sqlStatement = `SELECT * FROM "transaction" WHERE date_post >= $1 and date_post < $2`
+	rows, err := r.DB.Query(sqlStatement, date["from"], date["to"])
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
 		return nil, fmt.Errorf("error getting rows: %w", err)
 	}
 	defer rows.Close()

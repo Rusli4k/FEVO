@@ -21,6 +21,8 @@ const (
 	keyPayType            = "payment_type"
 	keyDatePost           = "date_post"
 	keyPayNar             = "payment_narrative"
+	timeLayout            = "2006-01-02 15:04:05"
+	dateLayout            = "2006-01-02"
 )
 
 // const (

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/rusli4k/fevo/app/entities"
 )
@@ -18,7 +19,7 @@ func NewTA(repo TARepository) Transaction {
 
 // SaveTA represents business logic
 // and will take care of creating user.
-func (tr Transaction) UploadTr(transaction entities.Transaction) error {
+func (tr Transaction) UploadTrans(transaction entities.Transaction) error {
 	if err := tr.Repo.AddTr(transaction); err != nil {
 		return fmt.Errorf("repository error: %w", err)
 	}
@@ -48,10 +49,37 @@ func (tr Transaction) GetTransByTermID(id []int) ([]entities.Transaction, error)
 	return ts, nil
 }
 
-// // func (t Transaction) GetTrByStatusUC()
+func (tr Transaction) GetTransByStatus(st string) ([]entities.Transaction, error) {
+	ts, err := tr.Repo.GetTrByStatus(st)
+	if ts == nil {
+		if err != nil {
+			return nil, fmt.Errorf("repository error: %w", err)
+		}
+		return nil, nil
+	}
+	return ts, nil
+}
 
-// // func (t Transaction) GetTrByPaymentTypeUC()
+func (tr Transaction) GetTransByPayType(st string) ([]entities.Transaction, error) {
+	ts, err := tr.Repo.GetTrByPayType(st)
+	if ts == nil {
+		if err != nil {
+			return nil, fmt.Errorf("repository error: %w", err)
+		}
+		return nil, nil
+	}
+	return ts, nil
+}
 
-// // func (t Transaction) GetTrByDataPostUC()
+func (tr Transaction) GetTransByDataPost(date map[string]time.Time) ([]entities.Transaction, error) {
+	ts, err := tr.Repo.GetTrByDataPost(date)
+	if ts == nil {
+		if err != nil {
+			return nil, fmt.Errorf("repository error: %w", err)
+		}
+		return nil, nil
+	}
+	return ts, nil
+}
 
 // // func (t Transaction) GetTrByPaymentNarrativeUC()

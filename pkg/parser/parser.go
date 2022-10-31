@@ -17,6 +17,9 @@ const (
 	paymentOptCard = "card"
 	timeLayout     = "2006-01-02 15:04:05"
 	dateLayout     = "2006-01-02"
+	timeOnlyLayout = " 00:00:00"
+	minTime        = "1970-01-01 00:00:00"
+	maxTime        = "2100-01-01 00:00:00"
 	lenOfDateFrom  = 14
 	lenOfDateTo    = 12
 )
@@ -174,6 +177,8 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 	return ta, nil
 }
 
+// ParseDateFromString gets string, return map with time.Time "from" and time.Time "to".
+// Return minTime or maxTime if one of filter is missing.
 func ParseDateFromString(s string) (map[string]time.Time, error) {
 	lenOfStringDate := len(s)
 	date := make(map[string]time.Time)
@@ -181,25 +186,36 @@ func ParseDateFromString(s string) (map[string]time.Time, error) {
 	switch lenOfStringDate {
 	case lenOfDateFrom:
 		{
-			date["from"], err = time.Parse("2006-01-02", s[4:])
+
+			dateFromString := s[4:]
+			dateFromString += timeOnlyLayout
+			date["from"], err = time.Parse(timeLayout, dateFromString)
 			if err != nil {
 				return nil, fmt.Errorf("error while parsing \"from\": %w", err)
 			}
+			date["to"], _ = time.Parse(timeLayout, maxTime)
 		}
 	case lenOfDateTo:
 		{
-			date["to"], err = time.Parse("2006-01-02", s[2:])
+			dateToString := s[2:]
+			dateToString += timeOnlyLayout
+			date["to"], err = time.Parse(timeLayout, dateToString)
 			if err != nil {
 				return nil, fmt.Errorf("error while parsing \"to\": %w", err)
 			}
+			date["from"], _ = time.Parse(timeLayout, minTime)
 		}
 	case lenOfDateFrom + lenOfDateTo:
 		{
-			date["from"], err = time.Parse("2006-01-02", s[4:15])
+			dateFromString := s[4:14]
+			dateFromString += timeOnlyLayout
+			date["from"], err = time.Parse(timeLayout, dateFromString)
 			if err != nil {
 				return nil, fmt.Errorf("error while parsing \"from\": %w", err)
 			}
-			date["to"], err = time.Parse("2006-01-02", s[17:])
+			dateToString := s[16:]
+			dateToString += timeOnlyLayout
+			date["to"], err = time.Parse(timeLayout, dateToString)
 			if err != nil {
 				return nil, fmt.Errorf("error while parsing \"to\": %w", err)
 			}
