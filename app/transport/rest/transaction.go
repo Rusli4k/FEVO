@@ -44,7 +44,7 @@ func (th TAHandler) UploadTransactions() http.Handler {
 }
 
 // GetTransactions handle  filters in request.
-func (ta TAHandler) GetTransactions() http.Handler {
+func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var par entities.Filter
 		var err error
@@ -75,88 +75,87 @@ func (ta TAHandler) GetTransactions() http.Handler {
 
 		// Getting terminal ID from request - type: []int.
 		if value, ok := values[keyTmID]; ok {
-			{
-				for _, v := range value {
-					id, err := strconv.Atoi(v)
-					if err != nil {
-						WriteJSONResponse(w, http.StatusBadRequest, Response{
-							Message: MSgBadURL,
-							Details: err.Error()})
 
-						return
-					}
-					par.TerminalID = append(par.TerminalID, id)
-				}
-
-				ansTa, err := ta.usecase.GetTransByTermID(par.TerminalID)
+			for _, v := range value {
+				id, err := strconv.Atoi(v)
 				if err != nil {
-					WriteJSONResponse(w, http.StatusInternalServerError, Response{
-						Message: MsgInternalSeverErr,
+					WriteJSONResponse(w, http.StatusBadRequest, Response{
+						Message: MSgBadURL,
 						Details: err.Error()})
 
 					return
 				}
-				if ansTa == nil {
-					WriteJSONResponse(w, http.StatusOK, Response{
-						Message: MsgNotFound,
-						Details: fmt.Sprint("No data found with input: ", par.TerminalID),
-					})
+				par.TerminalID = append(par.TerminalID, id)
+			}
 
-					return
-				}
-				WriteJSONResponse(w, http.StatusOK, ansTa)
+			ansTa, err := ta.usecase.GetTransByTermID(par.TerminalID)
+			if err != nil {
+				WriteJSONResponse(w, http.StatusInternalServerError, Response{
+					Message: MsgInternalSeverErr,
+					Details: err.Error()})
 
 				return
 			}
+			if ansTa == nil {
+				WriteJSONResponse(w, http.StatusOK, Response{
+					Message: MsgNotFound,
+					Details: fmt.Sprint("No data found with input: ", par.TerminalID),
+				})
 
-			// Getting parameter status from request - accepted|declined.
-			if value, ok := values[keyStatus]; ok {
-				{
-					par.Status = value[0]
-					if par.Status != statusValAccepted && par.Status != statusValDeclined {
-						WriteJSONResponse(w, http.StatusBadRequest, Response{
-							Message: MSgBadURL,
-							Details: err.Error()})
+				return
+			}
+			WriteJSONResponse(w, http.StatusOK, ansTa)
 
-						return
-					}
+			return
+		}
+
+		// Getting parameter status from request - accepted|declined.
+		if value, ok := values[keyStatus]; ok {
+			{
+				par.Status = value[0]
+				if par.Status != statusValAccepted && par.Status != statusValDeclined {
+					WriteJSONResponse(w, http.StatusBadRequest, Response{
+						Message: MSgBadURL,
+						Details: err.Error()})
+
+					return
 				}
 			}
-			// Getting parameter payment type from request - cash|card.
-			if value, ok := values[keyPayType]; ok {
-				{
-					par.Status = value[0]
-					if par.PaymentType != payValCash && par.PaymentType != payValCard {
-						WriteJSONResponse(w, http.StatusBadRequest, Response{
-							Message: MSgBadURL,
-							Details: err.Error()})
+		}
+		// Getting parameter payment type from request - cash|card.
+		if value, ok := values[keyPayType]; ok {
+			{
+				par.Status = value[0]
+				if par.PaymentType != payValCash && par.PaymentType != payValCard {
+					WriteJSONResponse(w, http.StatusBadRequest, Response{
+						Message: MSgBadURL,
+						Details: err.Error()})
 
-						return
-					}
+					return
 				}
 			}
-			// Getting parameter Date from request - fromXXXX-XX-XXtoXXXX-XX-XX.
-			if value, ok := values[keyDatePost]; ok {
-				{
-					par.DatePost, err = parser.ParseDateFromString(value[0])
-					if err != nil {
-						WriteJSONResponse(w, http.StatusBadRequest, Response{
-							Message: MSgBadURL,
-							Details: err.Error()})
+		}
+		// Getting parameter Date from request - fromXXXX-XX-XXtoXXXX-XX-XX.
+		if value, ok := values[keyDatePost]; ok {
+			{
+				par.DatePost, err = parser.ParseDateFromString(value[0])
+				if err != nil {
+					WriteJSONResponse(w, http.StatusBadRequest, Response{
+						Message: MSgBadURL,
+						Details: err.Error()})
 
-						return
-					}
+					return
 				}
 			}
-			// Getting parameter payment narrative from request - string.
-			if value, ok := values[keyPayNar]; ok {
+		}
+		// Getting parameter payment narrative from request - string.
+		if value, ok := values[keyPayNar]; ok {
 
-				{
-					par.PaymentNarrative = value[0]
-
-				}
+			{
+				par.PaymentNarrative = value[0]
 
 			}
+
 		}
 	})
 }
