@@ -6,18 +6,12 @@ import (
 
 // TAUsecase represents transaction use-case layer.
 type TAUsecase interface {
-	UploadTr(tr entities.Transaction) error
-	// GetTrByIDUC(id uint) (entities.Transaction, error)
-	// GetTrByTerminalIDUC()
+	UploadTr(entities.Transaction) error
+	GetTransByID(int) (*entities.Transaction, error)
+	GetTransByTermID([]int) ([]entities.Transaction, error)
+
 	// GetTrByStatusUC()
 	// GetTrByPaymentTypeUC()
 	// GetTrByDataPostUC()
 	// GetTrByPaymentNarrativeUC()
 }
-
-// GetTrByID(id uint) (entities.Transaction, error)
-// GetTrByTerminalID()
-// GetTrByStatus()
-// GetTrByPaymentType()
-// GetTrByDataPost()
-// GetTrByPaymentNarrative()

@@ -26,16 +26,32 @@ func (tr Transaction) UploadTr(transaction entities.Transaction) error {
 	return nil
 }
 
-// func (t Transaction) GetTrByIDUC(id uint) (entities.Transaction, error) {
-// 	return entities.Transaction{}, nil
-// }
+func (tr Transaction) GetTransByID(id int) (*entities.Transaction, error) {
+	ts, err := tr.Repo.GetTrByID(id)
+	if ts == nil {
+		if err != nil {
+			return nil, fmt.Errorf("repository error: %w", err)
+		}
+		return nil, nil
+	}
+	return ts, nil
+}
 
-// func (t Transaction) GetTrByTerminalIDUC()
+func (tr Transaction) GetTransByTermID(id []int) ([]entities.Transaction, error) {
+	ts, err := tr.Repo.GetTrByTermID(id)
+	if ts == nil {
+		if err != nil {
+			return nil, fmt.Errorf("repository error: %w", err)
+		}
+		return nil, nil
+	}
+	return ts, nil
+}
 
-// func (t Transaction) GetTrByStatusUC()
+// // func (t Transaction) GetTrByStatusUC()
 
-// func (t Transaction) GetTrByPaymentTypeUC()
+// // func (t Transaction) GetTrByPaymentTypeUC()
 
-// func (t Transaction) GetTrByDataPostUC()
+// // func (t Transaction) GetTrByDataPostUC()
 
-// func (t Transaction) GetTrByPaymentNarrativeUC()
+// // func (t Transaction) GetTrByPaymentNarrativeUC()

@@ -27,6 +27,16 @@ type Transaction struct {
 	PaymentNarrative   string    `json:"payment_narrative"`
 }
 
+// Filter contains all acceptable parameters for filtering Transactions
+type Filter struct {
+	TransactionID    int
+	TerminalID       []int
+	Status           string
+	PaymentType      string
+	DatePost         map[string]time.Time
+	PaymentNarrative string
+}
+
 // "id" INT  NOT NULL,
 // "request_id" INT,
 // "terminal_id" INT,

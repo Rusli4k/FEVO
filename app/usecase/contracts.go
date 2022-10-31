@@ -11,9 +11,9 @@ import (
 // TARepository interface can be implemented
 // in any kind of repositories like Postgres, MySQL etc.
 type TARepository interface {
-	AddTr(tr entities.Transaction) error
-	// GetTrByID(id uint) (entities.Transaction, error)
-	// GetTrByTerminalID()
+	AddTr(entities.Transaction) error
+	GetTrByID(int) (*entities.Transaction, error)
+	GetTrByTermID([]int) ([]entities.Transaction, error)
 	// GetTrByStatus()
 	// GetTrByPaymentType()
 	// GetTrByDataPost()

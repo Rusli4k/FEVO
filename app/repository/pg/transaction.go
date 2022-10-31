@@ -42,8 +42,59 @@ func (r Repo) AddTr(tr entities.Transaction) error {
 	return nil
 }
 
-// // GetTrByID get ID, returns single entity and error.
-// func (r Repo) GetTrByID(id uint) (entities.Transaction, error) { return entities.Transaction{}, nil }
+// GetTrByID get ID, returns single entity and error.
+func (r Repo) GetTrByID(id int) (*entities.Transaction, error) {
+	const sqlStatement = `SELECT * FROM "transaction" WHERE id = $1`
+	var tr entities.Transaction
+	if err := r.DB.QueryRow(sqlStatement, id).Scan(&tr.ID, &tr.RequestID, &tr.TerminalID, &tr.PartnerObjectID,
+		&tr.AmountTotal, &tr.AmountOriginal, &tr.CommissionPS, &tr.CommissionClient, &tr.CommissionProvider,
+		&tr.DateInput, &tr.DatePost, &tr.Status, &tr.PaymentType, &tr.PaymentNumber, &tr.ServiceID,
+		&tr.Service, &tr.PayeeID, &tr.PayeeName, &tr.PayeeBankMFO, &tr.PayeeBankAccount,
+		&tr.PaymentNarrative); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error getting rows: %w", err)
+	}
+
+	return &tr, nil
+}
+
+// GetTrByTermID get ID, returns single entity and error.
+func (r Repo) GetTrByTermID(id []int) ([]entities.Transaction, error) {
+	var sqlStatement = `SELECT * FROM "transaction" WHERE terminal_id IN (`
+	for _, v := range id {
+		sqlStatement = sqlStatement + fmt.Sprint(v) + ","
+	}
+	sqlStatement = sqlStatement[:len(sqlStatement)-1]
+	sqlStatement += ")"
+	rows, err := r.DB.Query(sqlStatement)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error getting rows: %w", err)
+	}
+	defer rows.Close()
+
+	var tas []entities.Transaction
+
+	for rows.Next() {
+		var tr entities.Transaction
+		err := rows.Scan(&tr.ID, &tr.RequestID, &tr.TerminalID, &tr.PartnerObjectID,
+			&tr.AmountTotal, &tr.AmountOriginal, &tr.CommissionPS, &tr.CommissionClient, &tr.CommissionProvider,
+			&tr.DateInput, &tr.DatePost, &tr.Status, &tr.PaymentType, &tr.PaymentNumber, &tr.ServiceID,
+			&tr.Service, &tr.PayeeID, &tr.PayeeName, &tr.PayeeBankMFO, &tr.PayeeBankAccount,
+			&tr.PaymentNarrative)
+
+		if err != nil {
+			return nil, fmt.Errorf("error getting rows: %w", err)
+		}
+		tas = append(tas, tr)
+	}
+
+	return tas, nil
+}
 
 // // GetTrByTerminalID
 // func (r Repo) GetTrByTerminalID()

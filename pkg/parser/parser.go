@@ -16,6 +16,9 @@ const (
 	paymentOptCash = "cash"
 	paymentOptCard = "card"
 	timeLayout     = "2006-01-02 15:04:05"
+	dateLayout     = "2006-01-02"
+	lenOfDateFrom  = 14
+	lenOfDateTo    = 12
 )
 
 func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
@@ -62,35 +65,36 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		}
 
 		// AmountTotal type of float64.
-		t.AmountTotal, err = strconv.ParseFloat(s[4], 32)
+		t.AmountTotal, err = strconv.ParseFloat(s[4], 64)
 		if err != nil {
 			rowWithError = i
 			break
 		}
 
 		// AmountOriginal type of float64.
-		t.AmountOriginal, err = strconv.ParseFloat(s[5], 32)
+		t.AmountOriginal, err = strconv.ParseFloat(s[5], 64)
 		if err != nil {
 			rowWithError = i
 			break
 		}
 
 		// CommissionPS type of float64.
-		t.CommissionPS, err = strconv.ParseFloat(s[6], 32)
+		t.CommissionPS, err = strconv.ParseFloat(s[6], 64)
+		fmt.Println(t.CommissionPS)
 		if err != nil {
 			rowWithError = i
 			break
 		}
 
 		// CommissionClient type of float.
-		t.CommissionClient, err = strconv.ParseFloat(s[7], 32)
+		t.CommissionClient, err = strconv.ParseFloat(s[7], 64)
 		if err != nil {
 			rowWithError = i
 			break
 		}
 
 		// CommissionProvider type of float64.
-		t.CommissionProvider, err = strconv.ParseFloat(s[8], 32)
+		t.CommissionProvider, err = strconv.ParseFloat(s[8], 64)
 		if err != nil {
 			rowWithError = i
 			break
@@ -168,4 +172,44 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 	}
 
 	return ta, nil
+}
+
+func ParseDateFromString(s string) (map[string]time.Time, error) {
+	lenOfStringDate := len(s)
+	date := make(map[string]time.Time)
+	var err error
+	switch lenOfStringDate {
+	case lenOfDateFrom:
+		{
+			date["from"], err = time.Parse("2006-01-02", s[4:])
+			if err != nil {
+				return nil, fmt.Errorf("error while parsing \"from\": %w", err)
+			}
+		}
+	case lenOfDateTo:
+		{
+			date["to"], err = time.Parse("2006-01-02", s[2:])
+			if err != nil {
+				return nil, fmt.Errorf("error while parsing \"to\": %w", err)
+			}
+		}
+	case lenOfDateFrom + lenOfDateTo:
+		{
+			date["from"], err = time.Parse("2006-01-02", s[4:15])
+			if err != nil {
+				return nil, fmt.Errorf("error while parsing \"from\": %w", err)
+			}
+			date["to"], err = time.Parse("2006-01-02", s[17:])
+			if err != nil {
+				return nil, fmt.Errorf("error while parsing \"to\": %w", err)
+			}
+		}
+	default:
+		{
+			return nil, fmt.Errorf("error while parsing string: %w", err)
+		}
+
+	}
+
+	return date, nil
 }

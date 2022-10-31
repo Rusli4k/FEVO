@@ -43,19 +43,6 @@ func (srv *Server) Run() error {
 
 func attachEndpoints(router *mux.Router, handlers Handlers) {
 	router.Path("/transactions").Methods(http.MethodPost).Handler(handlers.TAHandler.UploadTransactions())
-	router.Path("/transactions").Methods(http.MethodGet).
-		Queries(transaction_id).
-		Queries(terminal_id).
-		Queries(status).
-		Queries(payment_type).
-		Queries(date_post).
-		Queries(payment_narrative).
-		Handler(handlers.TAHandler.GetTransactions())
-
-	// var allowedSortArgs = strings.Join([]string{firstName, lastName, createdAt}, "|")
-	// router.Path("/users").Methods(http.MethodGet).
-	// 	Queries(offset, "{"+offset+":[0-9]+}").
-	// 	Queries(limit, "{"+limit+":[0-9]+}").
-	// 	Queries(sort, "{"+sort+":(?:"+allowedSortArgs+")(?:[,]{1}(?:"+allowedSortArgs+")*)*}").
-	// 	Handler(handlers.UserHandler.GetUsers())
+	router.Path("/transactions").Methods(http.MethodGet).Handler(handlers.TAHandler.GetTransactions())
+	//	router.Path("/transactions/CSV").Methods(http.MethodGet).Handler(handlers.TAHandler.GetTransactionsCSV())
 }

@@ -7,9 +7,20 @@ const (
 	MsgBadRequest         = "Bad request"
 	MsgNotFound           = "Not found"
 	MsgTimeOut            = "Connection timeout"
+	MSgBadURL             = "Error while parsing URL"
 	handlerTimeoutSeconds = 30
 	readTimeoutSeconds    = 2
 	writeTimeoutSeconds   = 5
+	statusValAccepted     = "accepted"
+	statusValDeclined     = "declined"
+	payValCash            = "cash"
+	payValCard            = "card"
+	keyTaID               = "transaction_id"
+	keyTmID               = "terminal_id"
+	keyStatus             = "status"
+	keyPayType            = "payment_type"
+	keyDatePost           = "date_post"
+	keyPayNar             = "payment_narrative"
 )
 
 // const (
