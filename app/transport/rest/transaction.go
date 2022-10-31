@@ -25,6 +25,7 @@ func (th TAHandler) UploadTransactions() http.Handler {
 			WriteJSONResponse(w, http.StatusUnprocessableEntity, Response{
 				Message: "Error occurred while processing the file",
 				Details: err.Error()})
+
 			return
 		}
 
@@ -33,6 +34,7 @@ func (th TAHandler) UploadTransactions() http.Handler {
 				WriteJSONResponse(w, http.StatusInternalServerError, Response{
 					Message: "Error while adding to db: ",
 					Details: err.Error()})
+
 				return
 			}
 		}
@@ -44,7 +46,7 @@ func (th TAHandler) UploadTransactions() http.Handler {
 }
 
 // GetTransactions handles filters in request.
-func (ta TAHandler) GetTransactionsByFilter() http.Handler {
+func (th TAHandler) GetTransactionsByFilter() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var par entities.Filter
 		var err error
@@ -60,7 +62,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 
 				return
 			}
-			ansTa, err := ta.usecase.GetTransByID(par.TransactionID)
+			ansTa, err := th.usecase.GetTransByID(par.TransactionID)
 			if err != nil {
 				WriteJSONResponse(w, http.StatusInternalServerError, Response{
 					Message: MsgInternalSeverErr,
@@ -87,7 +89,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 				par.TerminalID = append(par.TerminalID, id)
 			}
 
-			ansTa, err := ta.usecase.GetTransByTermID(par.TerminalID)
+			ansTa, err := th.usecase.GetTransByTermID(par.TerminalID)
 			if err != nil {
 				WriteJSONResponse(w, http.StatusInternalServerError, Response{
 					Message: MsgInternalSeverErr,
@@ -118,7 +120,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 
 				return
 			}
-			ansTa, err := ta.usecase.GetTransByStatus(par.Status)
+			ansTa, err := th.usecase.GetTransByStatus(par.Status)
 			if err != nil {
 				WriteJSONResponse(w, http.StatusInternalServerError, Response{
 					Message: MsgInternalSeverErr,
@@ -149,7 +151,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 
 				return
 			}
-			ansTa, err := ta.usecase.GetTransByPayType(par.PaymentType)
+			ansTa, err := th.usecase.GetTransByPayType(par.PaymentType)
 			if err != nil {
 				WriteJSONResponse(w, http.StatusInternalServerError, Response{
 					Message: MsgInternalSeverErr,
@@ -181,7 +183,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 				return
 			}
 
-			ansTa, err := ta.usecase.GetTransByDataPost(par.DatePost)
+			ansTa, err := th.usecase.GetTransByDataPost(par.DatePost)
 			if err != nil {
 				WriteJSONResponse(w, http.StatusInternalServerError, Response{
 					Message: MsgInternalSeverErr,
@@ -212,7 +214,7 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 
 				return
 			}
-			ansTa, err := ta.usecase.GetTransByPayNar(par.PaymentNarrative)
+			ansTa, err := th.usecase.GetTransByPayNar(par.PaymentNarrative)
 			if err != nil {
 				WriteJSONResponse(w, http.StatusInternalServerError, Response{
 					Message: MsgInternalSeverErr,
@@ -232,10 +234,5 @@ func (ta TAHandler) GetTransactionsByFilter() http.Handler {
 
 			return
 		}
-	})
-}
-
-func (ta TAHandler) GetTransactionsCSV() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	})
 }

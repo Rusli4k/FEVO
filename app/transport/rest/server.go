@@ -44,5 +44,4 @@ func (srv *Server) Run() error {
 func attachEndpoints(router *mux.Router, handlers Handlers) {
 	router.Path("/transactions").Methods(http.MethodPost).Handler(handlers.TAHandler.UploadTransactions())
 	router.Path("/transactions").Methods(http.MethodGet).Handler(handlers.TAHandler.GetTransactionsByFilter())
-	//	router.Path("/transactions/CSV").Methods(http.MethodGet).Handler(handlers.TAHandler.GetTransactionsCSV())
 }

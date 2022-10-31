@@ -33,8 +33,10 @@ func (tr Transaction) GetTransByID(id int) (*entities.Transaction, error) {
 		if err != nil {
 			return nil, fmt.Errorf("repository error: %w", err)
 		}
+
 		return nil, nil
 	}
+
 	return ts, nil
 }
 
@@ -44,8 +46,10 @@ func (tr Transaction) GetTransByTermID(id []int) ([]entities.Transaction, error)
 		if err != nil {
 			return nil, fmt.Errorf("repository error: %w", err)
 		}
+
 		return nil, nil
 	}
+
 	return ts, nil
 }
 
@@ -55,8 +59,10 @@ func (tr Transaction) GetTransByStatus(st string) ([]entities.Transaction, error
 		if err != nil {
 			return nil, fmt.Errorf("repository error: %w", err)
 		}
+
 		return nil, nil
 	}
+
 	return ts, nil
 }
 
@@ -66,8 +72,10 @@ func (tr Transaction) GetTransByPayType(st string) ([]entities.Transaction, erro
 		if err != nil {
 			return nil, fmt.Errorf("repository error: %w", err)
 		}
+
 		return nil, nil
 	}
+
 	return ts, nil
 }
 
@@ -77,8 +85,10 @@ func (tr Transaction) GetTransByDataPost(date map[string]time.Time) ([]entities.
 		if err != nil {
 			return nil, fmt.Errorf("repository error: %w", err)
 		}
+
 		return nil, nil
 	}
+
 	return ts, nil
 }
 
@@ -88,8 +98,10 @@ func (tr Transaction) GetTransByPayNar(st string) ([]entities.Transaction, error
 		if err != nil {
 			return nil, fmt.Errorf("repository error: %w", err)
 		}
+
 		return nil, nil
 	}
+
 	return ts, nil
 }
 

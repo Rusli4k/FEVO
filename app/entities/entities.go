@@ -1,8 +1,8 @@
-// Package provides core of the program
 package entities
 
 import "time"
 
+// Transaction is main entity of program.
 type Transaction struct {
 	ID                 int       `json:"transaction_id"`
 	RequestID          int       `json:"request_id"`
@@ -27,7 +27,7 @@ type Transaction struct {
 	PaymentNarrative   string    `json:"payment_narrative"`
 }
 
-// Filter contains all acceptable parameters for filtering Transactions
+// Filter contains all acceptable parameters for filtering Transactions.
 type Filter struct {
 	TransactionID    int
 	TerminalID       []int
@@ -36,25 +36,3 @@ type Filter struct {
 	DatePost         map[string]time.Time
 	PaymentNarrative string
 }
-
-// "id" INT  NOT NULL,
-// "request_id" INT,
-// "terminal_id" INT,
-// "partner_object_id" INT,
-// "amount_total" FLOAT,
-// "amount_original" FLOAT,
-// "commission_ps" FLOAT,
-// "commission_client" FLOAT,
-// "commission_provider" FLOAT,
-// "date_input" Timestamp Without Time Zone,
-// "date_post" Timestamp Without Time Zone,
-// "status" VARCHAR(8),
-// "payment_type" VARCHAR(4),
-// "payment_number" VARCHAR(10),
-// "service_id" INT,
-// "service" VARCHAR(17),
-// "payee_id" INT,
-// "payee_name" VARCHAR(10),
-// "payee_bank_mfo" INT,
-// "payee_bank_account" VARCHAR(17),
-// "payment_narrative" VARCHAR(255),

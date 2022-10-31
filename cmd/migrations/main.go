@@ -53,6 +53,7 @@ func migrateDB(db *sql.DB, direction string) error {
 	migrations := &migrate.FileMigrationSource{
 		Dir: migrationDir,
 	}
+
 	var dir migrate.MigrationDirection
 	if direction == down {
 		dir = 1

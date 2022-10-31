@@ -15,6 +15,7 @@ const (
 	statusOptDec   = "declined"
 	paymentOptCash = "cash"
 	paymentOptCard = "card"
+	bitSize        = 64
 	timeLayout     = "2006-01-02 15:04:05"
 	dateLayout     = "2006-01-02"
 	timeOnlyLayout = " 00:00:00"
@@ -26,6 +27,7 @@ const (
 
 func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 	var ta []entities.Transaction
+
 	var rowWithError int
 
 	reader := csv.NewReader(file)
@@ -37,12 +39,14 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 
 	for i := 1; i < len(lines); i++ {
 		var t entities.Transaction
+
 		s := lines[i]
 
 		// ID type of int.
 		t.ID, err = strconv.Atoi(s[0])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
@@ -50,6 +54,7 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		t.RequestID, err = strconv.Atoi(s[1])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
@@ -57,6 +62,7 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		t.TerminalID, err = strconv.Atoi(s[2])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
@@ -64,42 +70,47 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		t.PartnerObjectID, err = strconv.Atoi(s[3])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
 		// AmountTotal type of float64.
-		t.AmountTotal, err = strconv.ParseFloat(s[4], 64)
+		t.AmountTotal, err = strconv.ParseFloat(s[4], bitSize)
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
 		// AmountOriginal type of float64.
-		t.AmountOriginal, err = strconv.ParseFloat(s[5], 64)
+		t.AmountOriginal, err = strconv.ParseFloat(s[5], bitSize)
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
 		// CommissionPS type of float64.
-		t.CommissionPS, err = strconv.ParseFloat(s[6], 64)
-		fmt.Println(t.CommissionPS)
+		t.CommissionPS, err = strconv.ParseFloat(s[6], bitSize)
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
 		// CommissionClient type of float.
-		t.CommissionClient, err = strconv.ParseFloat(s[7], 64)
+		t.CommissionClient, err = strconv.ParseFloat(s[7], bitSize)
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
 		// CommissionProvider type of float64.
-		t.CommissionProvider, err = strconv.ParseFloat(s[8], 64)
+		t.CommissionProvider, err = strconv.ParseFloat(s[8], bitSize)
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
@@ -107,6 +118,7 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		t.DateInput, err = time.Parse(timeLayout, s[9])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
@@ -114,21 +126,26 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		t.DatePost, err = time.Parse(timeLayout, s[10])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
 		// Status type of string.
 		if s[11] != statusOptAcc && s[11] != statusOptDec {
 			rowWithError = i
+
 			break
 		}
+
 		t.Status = s[11]
 
 		// PaymentType type of string.
 		if s[12] != paymentOptCard && s[12] != paymentOptCash {
 			rowWithError = i
+
 			break
 		}
+
 		t.PaymentType = s[12]
 
 		// PaymentNumber type of string.
@@ -138,6 +155,7 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		t.ServiceID, err = strconv.Atoi(s[14])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
@@ -148,6 +166,7 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		t.PayeeID, err = strconv.Atoi(s[16])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
@@ -158,6 +177,7 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 		t.PayeeBankMFO, err = strconv.Atoi(s[18])
 		if err != nil {
 			rowWithError = i
+
 			break
 		}
 
@@ -180,13 +200,14 @@ func CSVToTransactions(file io.Reader) ([]entities.Transaction, error) {
 // ParseDateFromString gets string, return map with time.Time "from" and time.Time "to".
 // Return minTime or maxTime if one of filter is missing.
 func ParseDateFromString(s string) (map[string]time.Time, error) {
-	lenOfStringDate := len(s)
 	date := make(map[string]time.Time)
+
 	var err error
+
+	lenOfStringDate := len(s)
 	switch lenOfStringDate {
 	case lenOfDateFrom:
 		{
-
 			dateFromString := s[4:]
 			dateFromString += timeOnlyLayout
 			date["from"], err = time.Parse(timeLayout, dateFromString)
@@ -224,7 +245,6 @@ func ParseDateFromString(s string) (map[string]time.Time, error) {
 		{
 			return nil, fmt.Errorf("error while parsing string: %w", err)
 		}
-
 	}
 
 	return date, nil

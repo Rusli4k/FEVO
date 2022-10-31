@@ -2,7 +2,7 @@ package rest
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -19,6 +19,6 @@ func WriteJSONResponse(w http.ResponseWriter, statusCode int, data any) {
 	w.WriteHeader(statusCode)
 
 	if err := json.NewEncoder(w).Encode(data); err != nil {
-		fmt.Printf("failed encoding to JSON with status code : ")
+		log.Fatal("failed encoding to JSON with status code : ")
 	}
 }
