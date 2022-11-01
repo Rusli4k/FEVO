@@ -242,5 +242,10 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 
 			return
 		}
+
+		// Handling wrong parameter
+		WriteJSONResponse(w, http.StatusBadRequest, Response{
+			Message: MSgBadURL,
+			Details: fmt.Sprint(MsgInvalidInput, values)})
 	})
 }
