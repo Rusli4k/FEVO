@@ -6,3 +6,9 @@ endif
 .PHONY: migrate 
 migrate:
 	@go run cmd/migrations/main.go -migrate $(DIRECTION)
+
+start:
+	@go run cmd/migrations/main.go -migrate up
+	@go run cmd/rest/main.go
+
+stop: 
