@@ -70,7 +70,15 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 
 				return
 			}
-			WriteJSONResponse(w, http.StatusOK, &ansTa)
+			if ansTa == nil {
+				WriteJSONResponse(w, http.StatusOK, Response{
+					Message: MsgNotFound,
+					Details: fmt.Sprint(MsgNotFoundWithIn, value),
+				})
+
+				return
+			}
+			WriteJSONResponse(w, http.StatusOK, ansTa)
 
 			return
 		}
@@ -100,7 +108,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if ansTa == nil {
 				WriteJSONResponse(w, http.StatusOK, Response{
 					Message: MsgNotFound,
-					Details: fmt.Sprint("No data found with input: ", par.TerminalID),
+					Details: fmt.Sprint(MsgNotFoundWithIn, par.TerminalID),
 				})
 
 				return
@@ -116,7 +124,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if par.Status != statusValAccepted && par.Status != statusValDeclined {
 				WriteJSONResponse(w, http.StatusBadRequest, Response{
 					Message: MSgBadURL,
-					Details: fmt.Sprintf("Invalid input for filter: %s", par.Status)})
+					Details: fmt.Sprint(MsgInvalidInput, value)})
 
 				return
 			}
@@ -131,7 +139,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if ansTa == nil {
 				WriteJSONResponse(w, http.StatusOK, Response{
 					Message: MsgNotFound,
-					Details: fmt.Sprint("No data found with input: ", par.Status),
+					Details: fmt.Sprint(MsgNotFoundWithIn, par.Status),
 				})
 
 				return
@@ -147,7 +155,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if par.PaymentType != payValCard && par.PaymentType != payValCash {
 				WriteJSONResponse(w, http.StatusBadRequest, Response{
 					Message: MSgBadURL,
-					Details: fmt.Sprintf("Invalid input for filter: %s", par.PaymentType)})
+					Details: fmt.Sprint(MsgInvalidInput, par.PaymentType)})
 
 				return
 			}
@@ -162,7 +170,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if ansTa == nil {
 				WriteJSONResponse(w, http.StatusOK, Response{
 					Message: MsgNotFound,
-					Details: fmt.Sprint("No data found with input: ", par.PaymentType),
+					Details: fmt.Sprint(MsgNotFoundWithIn, par.PaymentType),
 				})
 
 				return
@@ -178,7 +186,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if err != nil {
 				WriteJSONResponse(w, http.StatusBadRequest, Response{
 					Message: MSgBadURL,
-					Details: fmt.Sprintf("Invalid input %s", value)})
+					Details: fmt.Sprint(MsgInvalidInput, value)})
 
 				return
 			}
@@ -194,7 +202,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if ansTa == nil {
 				WriteJSONResponse(w, http.StatusOK, Response{
 					Message: MsgNotFound,
-					Details: fmt.Sprint("No data found with input: ", value),
+					Details: fmt.Sprint(MsgNotFoundWithIn, value),
 				})
 
 				return
@@ -210,7 +218,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if len(par.PaymentNarrative) < payNarMinLen {
 				WriteJSONResponse(w, http.StatusBadRequest, Response{
 					Message: MSgBadURL,
-					Details: fmt.Sprintf("Min length of payment narrative is %v", payNarMinLen)})
+					Details: fmt.Sprint(MsgInvalidInput, payNarMinLen)})
 
 				return
 			}
@@ -225,7 +233,7 @@ func (th TAHandler) GetTransactionsByFilter() http.Handler {
 			if ansTa == nil {
 				WriteJSONResponse(w, http.StatusOK, Response{
 					Message: MsgNotFound,
-					Details: fmt.Sprint("No data found with input: ", value),
+					Details: fmt.Sprint(MsgNotFoundWithIn, value),
 				})
 
 				return

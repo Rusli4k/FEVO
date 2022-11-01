@@ -6,6 +6,8 @@ const (
 	MsgInternalSeverErr   = "Internal server error"
 	MsgBadRequest         = "Bad request"
 	MsgNotFound           = "Not found"
+	MsgNotFoundWithIn     = "No data found with input: "
+	MsgInvalidInput       = "Invalid input for filter: "
 	MsgTimeOut            = "Connection timeout"
 	MSgBadURL             = "Error while parsing URL"
 	handlerTimeoutSeconds = 30
