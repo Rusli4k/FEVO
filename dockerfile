@@ -6,8 +6,6 @@ COPY . .
 
 RUN go mod download 
 
-
-
 RUN go get -d -v ./...
 
 RUN go install -v ./... 

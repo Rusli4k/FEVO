@@ -3,6 +3,7 @@ package entities
 import "time"
 
 // Transaction is main entity of program.
+// Commissions is better to hold as *100 int.
 type Transaction struct {
 	ID                 int       `json:"transaction_id"`
 	RequestID          int       `json:"request_id"`
