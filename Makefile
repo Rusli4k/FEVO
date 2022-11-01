@@ -7,8 +7,9 @@ endif
 migrate:
 	@go run cmd/migrations/main.go -migrate $(DIRECTION)
 
-start:
+startup:
 	@go run cmd/migrations/main.go -migrate up
 	@go run cmd/rest/main.go
 
-stop: 
+start: 
+	@go run cmd/rest/main.go
