@@ -24,10 +24,15 @@ DB struct described in migration\. file
 
 
 HOW TO RUN 
+
 make migrate up //- creates table in DB
+
 make migrate down  //- drop created table
+
 make startup // - do migrate up and start program
+
 make start // - just start program ( in case of you made migration before)
+
 
 
 DO NOT USE DOCKER. IT DON`T WORK!!!
