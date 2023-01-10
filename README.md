@@ -33,10 +33,3 @@ make startup // - do migrate up and start program
 
 make start // - just start program ( in case of you made migration before)
 
-
-
-DO NOT USE DOCKER. IT DON`T WORK!!!
-
-I have no electricity to finish work :( 
-
-At now I don`t know how to upload project to github with out electricity (((
